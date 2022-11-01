@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterials;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -20,21 +21,28 @@ public class FragarachItem extends SwordItem {
   }
 
   @Override
-  public boolean damage(DamageSource source) {
-      DamageSource.thorns(source.getAttacker());
-      return true;
-    }
-
-  @Override
   public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-      user.playSound(SoundEvents.BLOCK_WOOL_BREAK, 1.0F, 1.0F);
-      return TypedActionResult.success(user.getStackInHand(hand));
-    }
+    ItemStack stack = user.getStackInHand(hand);
+    NbtCompound nbt = new NbtCompound();
+
+    nbt.putBoolean("activated", !stack.getNbt().getBoolean("activated"));
+    stack.setNbt(nbt);
+
+    user.playSound(stack.getNbt().getBoolean("activated") ? SoundEvents.BLOCK_NOTE_BLOCK_PLING : SoundEvents.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0F);
+
+    return TypedActionResult.success(user.getStackInHand(hand));
+  }
   
   public static void onDamageReceived(DamageSource source, float amount, PlayerEntity defender) {
     Entity attacker = source.getAttacker();
+    if (attacker == null) return;
 
-    if (defender.getMainHandStack().getItem() instanceof FragarachItem || defender.getOffHandStack().getItem() instanceof FragarachItem) {
+    ItemStack mainHandItem = defender.getMainHandStack();
+    ItemStack offHandItem = defender.getOffHandStack();
+
+    if ((mainHandItem.getItem() instanceof FragarachItem && mainHandItem.getNbt().getBoolean("activated")) 
+      || (offHandItem.getItem() instanceof FragarachItem && offHandItem.getNbt().getBoolean("activated"))
+      ) {
       attacker.damage((new TypeMoonDamageSource("fragarach")), amount);
       if (!attacker.isAlive()) {
         defender.heal(amount);
