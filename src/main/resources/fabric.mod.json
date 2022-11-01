@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "typemoonmod",
+  "version": "${version}",
+
+  "name": "Type Moon Mod",
+  "description": "Type Moon Mod",
+  "authors": [
+    "Tesch"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/typemoonmod/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.tesch.typemoon.TypeMoonMod"
+    ]
+  },
+  "mixins": [
+    "typemoonmod.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric": "*",
+    "minecraft": "~1.18",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
