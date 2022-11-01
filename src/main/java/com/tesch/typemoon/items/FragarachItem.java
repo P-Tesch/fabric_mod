@@ -43,9 +43,19 @@ public class FragarachItem extends SwordItem {
     if ((mainHandItem.getItem() instanceof FragarachItem && mainHandItem.getNbt().getBoolean("activated")) 
       || (offHandItem.getItem() instanceof FragarachItem && offHandItem.getNbt().getBoolean("activated"))
       ) {
+
       attacker.damage((new TypeMoonDamageSource("fragarach")), amount);
       if (!attacker.isAlive()) {
         defender.heal(amount);
+      }
+
+      if (mainHandItem.getItem() instanceof FragarachItem) {
+        mainHandItem.use(defender.getWorld(), defender, Hand.MAIN_HAND);
+        defender.getItemCooldownManager().set(mainHandItem.getItem(), 20 * 30);
+      }
+      else {
+        offHandItem.use(defender.getWorld(), defender, Hand.OFF_HAND);
+        defender.getItemCooldownManager().set(offHandItem.getItem(), 20 * 30);
       }
     }
   }
